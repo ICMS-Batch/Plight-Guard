@@ -11,7 +11,7 @@ def error_response(status_code: int, message=None) -> str:
     status_code : int
         The HTTP status code
     message : str, optional
-        The error message, by default None
+        The error message, by default Noneexport FLASK_ENV=development
 
     Returns
     -------
