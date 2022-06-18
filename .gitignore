@@ -25,3 +25,10 @@ buck-out/
 # Ruby / CocoaPods
 */ios/Pods/
 */vendor/bundle/
+
+# Backend 
+__pycache__
+logs
+migrations 
+venv
+*.db
