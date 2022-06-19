@@ -1,11 +1,11 @@
 from app import create_app
 from app import db
+ 
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 app = create_app()
-
 
 @app.cli.command()
 def remove_old_jwts():
