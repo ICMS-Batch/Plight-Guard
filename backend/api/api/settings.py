@@ -34,8 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     "rest_framework",
-    "hospital",
-    "django.contrib.gis",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -78,11 +76,8 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'plightguard',
-        'USER': 'dibashthapa',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
