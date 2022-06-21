@@ -1,9 +1,6 @@
  {
    "python.defaultInterpreterPath": "./backend/venv/bin/python" , 
-   "editor.codeActionsOnSave": {
-         "source.fixAll.eslint": true
-      },
-   "eslint.validate": ["javascript"] ,
+   "editor.defaultFormatter": "esbenp.prettier-vscode",
    "editor.formatOnPaste": true ,
    "editor.formatOnSave": true
  }
