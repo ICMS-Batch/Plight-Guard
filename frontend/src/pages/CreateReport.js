@@ -7,19 +7,14 @@ import {
   FormLabel,
   FormControl,
   Stack,
-  InputGroup,
-  InputLeftAddon,
   FormHelperText,
   Input,
   Textarea,
   Button,
-  Avatar,
   Flex,
   Icon,
   VisuallyHidden,
 } from "@chakra-ui/react";
-
-import { FaUser } from "react-icons/fa";
 
 const CreateReport = () => {
   return (
@@ -54,34 +49,16 @@ const CreateReport = () => {
         >
           <SimpleGrid columns={3} spacing={6}>
             <FormControl as={GridItem} colSpan={[3, 2]}>
-              <FormLabel
-                fontSize="sm"
-                fontWeight="md"
-                color="gray.700"
-                _dark={{
-                  color: "gray.50",
-                }}
-              >
-                Website
+              <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+                Title
               </FormLabel>
-              <InputGroup size="sm">
-                <InputLeftAddon
-                  bg="gray.50"
-                  _dark={{
-                    bg: "gray.800",
-                  }}
-                  color="gray.500"
-                  rounded="md"
-                >
-                  http://
-                </InputLeftAddon>
-                <Input
-                  type="tel"
-                  placeholder="www.example.com"
-                  focusBorderColor="brand.400"
-                  rounded="md"
-                />
-              </InputGroup>
+              <Input
+                type="text"
+                placeholder="E.g. Accident near Basantapur"
+                focusBorderColor="brand.400"
+                rounded="md"
+                width="full"
+              />
             </FormControl>
           </SimpleGrid>
 
@@ -90,15 +67,15 @@ const CreateReport = () => {
               <FormLabel
                 fontSize="sm"
                 fontWeight="md"
-                color="gray.700"
-                _dark={{
-                  color: "gray.50",
-                }}
+                color="blue.700"
+                // _dark={{
+                //   color: "gray.50",
+                // }}
               >
-                About
+                Description
               </FormLabel>
               <Textarea
-                placeholder="you@example.com"
+                placeholder="E.g. I was passing by the road , and found a guy lying on the road. And I need to call for ambulance"
                 mt={1}
                 rows={3}
                 shadow="sm"
@@ -108,7 +85,7 @@ const CreateReport = () => {
                 }}
               />
               <FormHelperText>
-                Brief description for your profile. URLs are hyperlinked.
+                Brief description about the report
               </FormHelperText>
             </FormControl>
           </div>
@@ -117,58 +94,12 @@ const CreateReport = () => {
             <FormLabel
               fontSize="sm"
               fontWeight="md"
-              color="gray.700"
+              color="blue.700"
               _dark={{
                 color: "gray.50",
               }}
             >
-              Photo
-            </FormLabel>
-            <Flex alignItems="center" mt={1}>
-              <Avatar
-                boxSize={12}
-                bg="gray.100"
-                _dark={{
-                  bg: "gray.800",
-                }}
-                icon={
-                  <Icon
-                    as={FaUser}
-                    boxSize={9}
-                    mt={3}
-                    rounded="full"
-                    color="gray.300"
-                    _dark={{
-                      color: "gray.700",
-                    }}
-                  />
-                }
-              />
-              <Button
-                type="button"
-                ml={5}
-                variant="outline"
-                size="sm"
-                fontWeight="medium"
-                _focus={{
-                  shadow: "none",
-                }}
-              >
-                Change
-              </Button>
-            </Flex>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: "gray.50",
-              }}
-            >
-              Cover photo
+              Upload Images
             </FormLabel>
             <Flex
               mt={1}

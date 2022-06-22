@@ -15,7 +15,57 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.views import exception_handler
+from http import HTTPStatus
+from typing import Any
+from rest_framework.response import Response
+
+from rest_framework.views import Response
+
+
+
+def api_exception_handler(exc: Exception, context: dict[str, Any]) -> Response:
+    """Custom API exception handler."""
+    response = exception_handler(exc, context) 
+    
+    http_code_to_message = {v.value: v.description for v in HTTPStatus}
+
+    if response is not None:
+        # Using the description's of the HTTPStatus class as error message.
+
+        error_payload = {
+            "error": {
+                "status_code": 0,
+                "message": "",
+                "details": [],
+            }
+        }
+        error = error_payload["error"]
+        status_code = response.status_code
+
+        error["status_code"] = status_code
+        error["message"] = http_code_to_message[status_code]
+        error["details"] = response.data
+        response.data = error_payload
+        return response
+    
+    else:
+        error_payload = {
+            "error":{
+                "status_code":500 ,
+                "message":"",
+                "details":[]
+            }
+        }
+
+        error = error_payload["error"]
+        error["message"] = http_code_to_message[500]
+        error["details"] =  str(exc)
+        return Response(error , status=500)
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("users/",  include("users.urls"))
 ]
