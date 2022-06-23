@@ -15,7 +15,8 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock, FaEnvelope } from "react-icons/fa";
-import { Link as RouterLink, Router } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import UserService from "../services/UserService";
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
@@ -23,6 +24,25 @@ const App = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowClick = () => setShowPassword(!showPassword);
+
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+    full_name: "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      ...credentials,
+      username: credentials.email,
+      first_name: credentials.full_name.split(" ")[0],
+      last_name: credentials.full_name.split(" ")[1],
+    };
+    UserService.register(formData).then((response) => {
+      console.log("response found", response);
+    });
+  };
 
   return (
     <Flex
@@ -42,7 +62,7 @@ const App = () => {
         <Avatar bg="blue.500" />
         <Heading color="blue.400">Sign Up</Heading>
         <Box minW={{ base: "90%", md: "468px" }}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <Stack
               spacing={4}
               p="1rem"
@@ -55,7 +75,16 @@ const App = () => {
                     pointerEvents="none"
                     children={<CFaUserAlt color="gray.300" />}
                   />
-                  <Input type="text" placeholder="full name" />
+                  <Input
+                    type="text"
+                    placeholder="full name"
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        full_name: e.target.value,
+                      })
+                    }
+                  />
                 </InputGroup>
               </FormControl>
 
@@ -65,7 +94,16 @@ const App = () => {
                     pointerEvents="none"
                     children={<FaEnvelope color="gray.300" />}
                   />
-                  <Input type="email" placeholder="email address" />
+                  <Input
+                    type="email"
+                    placeholder="email address"
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        email: e.target.value,
+                      })
+                    }
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
@@ -78,6 +116,12 @@ const App = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        password: e.target.value,
+                      })
+                    }
                   />
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleShowClick}>

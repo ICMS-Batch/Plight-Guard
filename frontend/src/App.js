@@ -1,7 +1,5 @@
 import "./App.css";
-import Map from "./components/Map";
-import { ChakraProvider, Flex, chakra } from "@chakra-ui/react";
-import Report from "./components/Report";
+import { ChakraProvider } from "@chakra-ui/react";
 import Routes from "./routes";
 
 function App() {

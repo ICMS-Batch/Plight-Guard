@@ -1,22 +1,64 @@
 import {
   Box,
-  SimpleGrid,
+  Select,
   GridItem,
-  Text,
   chakra,
   FormLabel,
   FormControl,
   Stack,
-  FormHelperText,
+  Checkbox,
   Input,
   Textarea,
   Button,
-  Flex,
-  Icon,
-  VisuallyHidden,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import Map from "../components/Map";
+import ReportService from "../services/ReportService";
 
 const CreateReport = () => {
+  const [report, setReport] = useState({
+    images: [],
+    attachments: [],
+    lat: "",
+    long: "",
+    full_location: "",
+    description: "",
+    title: "",
+    nature_of_incident: "",
+    category: "",
+  });
+
+  const [categories, setCategories] = useState([]);
+
+  const [isAnonymous, setIsAnonymous] = useState(false);
+
+  const setLatAndLong = (lat, lng) => {
+    setReport({ ...report, lat: lat, long: lng });
+  };
+
+  useEffect(() => {
+    ReportService.getCategories().then((response) => {
+      setCategories(response.results);
+    });
+  }, []);
+
+  console.log("categories", categories);
+
+  const submitReport = (e) => {
+    const formData = new FormData();
+    for (const key in report) {
+      formData.append(key, report[key]);
+    }
+    ReportService.create(formData)
+      .then((response) => {
+        setCategories(response.results);
+      })
+      .catch((err) => {
+        console.log("Error creating report", err);
+      });
+    e.preventDefault();
+  };
+
   return (
     <Box
       bg="#edf3f8"
@@ -34,6 +76,8 @@ const CreateReport = () => {
         overflow={{
           sm: "hidden",
         }}
+        width="lg"
+        onSubmit={submitReport}
       >
         <Stack
           px={4}
@@ -42,55 +86,8 @@ const CreateReport = () => {
           _dark={{
             bg: "#141517",
           }}
-          spacing={6}
-          p={{
-            sm: 6,
-          }}
         >
-          <SimpleGrid columns={3} spacing={6}>
-            <FormControl as={GridItem} colSpan={[3, 2]}>
-              <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
-                Title
-              </FormLabel>
-              <Input
-                type="text"
-                placeholder="E.g. Accident near Basantapur"
-                focusBorderColor="brand.400"
-                rounded="md"
-                width="full"
-              />
-            </FormControl>
-          </SimpleGrid>
-
-          <div>
-            <FormControl id="email" mt={1}>
-              <FormLabel
-                fontSize="sm"
-                fontWeight="md"
-                color="blue.700"
-                // _dark={{
-                //   color: "gray.50",
-                // }}
-              >
-                Description
-              </FormLabel>
-              <Textarea
-                placeholder="E.g. I was passing by the road , and found a guy lying on the road. And I need to call for ambulance"
-                mt={1}
-                rows={3}
-                shadow="sm"
-                focusBorderColor="brand.400"
-                fontSize={{
-                  sm: "sm",
-                }}
-              />
-              <FormHelperText>
-                Brief description about the report
-              </FormHelperText>
-            </FormControl>
-          </div>
-
-          <FormControl>
+          <FormControl alignItems="center">
             <FormLabel
               fontSize="sm"
               fontWeight="md"
@@ -101,82 +98,152 @@ const CreateReport = () => {
             >
               Upload Images
             </FormLabel>
-            <Flex
-              mt={1}
-              justify="center"
-              px={6}
-              pt={5}
-              pb={6}
-              borderWidth={2}
-              _dark={{
-                color: "gray.500",
+            <Input
+              type="file"
+              onChange={(e) => {
+                setReport({
+                  ...report,
+                  images: [...report.images, e.target.files],
+                });
               }}
-              borderStyle="dashed"
-              rounded="md"
+            />
+          </FormControl>
+          <FormControl justifyContent="center">
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="blue.700"
+              _dark={{
+                color: "gray.50",
+              }}
             >
-              <Stack spacing={1} textAlign="center">
-                <Icon
-                  mx="auto"
-                  boxSize={12}
-                  color="gray.400"
-                  _dark={{
-                    color: "gray.500",
-                  }}
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 48 48"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </Icon>
-                <Flex
-                  fontSize="sm"
-                  color="gray.600"
-                  _dark={{
-                    color: "gray.400",
-                  }}
-                  alignItems="baseline"
-                >
-                  <chakra.label
-                    htmlFor="file-upload"
-                    cursor="pointer"
-                    rounded="md"
-                    fontSize="md"
-                    color="brand.600"
-                    _dark={{
-                      color: "brand.200",
-                    }}
-                    pos="relative"
-                    _hover={{
-                      color: "brand.400",
-                      _dark: {
-                        color: "brand.300",
-                      },
-                    }}
-                  >
-                    <span>Upload a file</span>
-                    <VisuallyHidden>
-                      <input id="file-upload" name="file-upload" type="file" />
-                    </VisuallyHidden>
-                  </chakra.label>
-                  <Text pl={1}>or drag and drop</Text>
-                </Flex>
-                <Text
-                  fontSize="xs"
-                  color="gray.500"
-                  _dark={{
-                    color: "gray.50",
-                  }}
-                >
-                  PNG, JPG, GIF up to 10MB
-                </Text>
-              </Stack>
-            </Flex>
+              Additional media attachments
+            </FormLabel>
+            <Input
+              type="file"
+              onChange={(e) => {
+                setReport({
+                  ...report,
+                  attachments: [...report.attachments, e.target.files],
+                });
+              }}
+            />
+          </FormControl>
+          <FormControl as={GridItem} colSpan={[3, 2]}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Title
+            </FormLabel>
+            <Input
+              type="text"
+              placeholder="E.g. Pot Holes"
+              focusBorderColor="blue.400"
+              rounded="md"
+              width="full"
+              onChange={(e) => {
+                setReport({
+                  ...report,
+                  title: e.target.value,
+                });
+              }}
+            />
+          </FormControl>
+          <FormControl id="email" mt={1}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Nature of report
+            </FormLabel>
+            <Select
+              placeholder="Select option"
+              onChange={(e) => {
+                setReport({ ...report, nature_of_incident: e.target.value });
+              }}
+              value={report.nature_of_incident}
+            >
+              <option value="NORMAL">Normal</option>
+              <option value="EMERGENCY">Danger</option>
+            </Select>
+          </FormControl>
+          <FormControl id="email" mt={1}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Content Description
+            </FormLabel>
+            <Textarea
+              placeholder="E.g. I was passing by the road and saw pot holess"
+              mt={1}
+              rows={3}
+              onChange={(e) => {
+                setReport({
+                  ...report,
+                  description: e.target.value,
+                });
+              }}
+              shadow="sm"
+              focusBorderColor="blue.400"
+              fontSize={{
+                sm: "sm",
+              }}
+            />
+          </FormControl>
+          <FormControl id="email" mt={1}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Category
+            </FormLabel>
+
+            <Select
+              placeholder="Select Category"
+              onChange={(e) => {
+                setReport({ ...report, category: e.target.value });
+              }}
+              value={report.category}
+            >
+              {categories.map((category, index) => {
+                return (
+                  <option key={index} value={category.id}>
+                    {category.name}
+                  </option>
+                );
+              })}
+            </Select>
+          </FormControl>
+          <FormControl id="email" mt={1}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Marker Location
+            </FormLabel>
+            <Input
+              mt={1}
+              shadow="sm"
+              focusBorderColor="blue.400"
+              fontSize={{
+                sm: "sm",
+              }}
+              value={`${report.lat} ${report.long}`}
+              type="text"
+              disabled
+            />
+          </FormControl>
+          <FormControl id="email" mt={1}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Location
+            </FormLabel>
+            <Input
+              mt={1}
+              shadow="sm"
+              focusBorderColor="blue.400"
+              fontSize={{
+                sm: "sm",
+              }}
+              type="text"
+              onChange={(e) => {
+                setReport({ ...report, full_location: e.target.value });
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <Checkbox
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              value={isAnonymous}
+            >
+              Upload as anonymous ?
+            </Checkbox>
           </FormControl>
         </Stack>
         <Box
@@ -193,16 +260,19 @@ const CreateReport = () => {
         >
           <Button
             type="submit"
-            colorScheme="brand"
+            colorScheme="blue"
             _focus={{
               shadow: "",
             }}
             fontWeight="md"
           >
-            Save
+            Submit
           </Button>
         </Box>
       </chakra.form>
+      <chakra.div position="relative" width="50%">
+        <Map isDraggable={true} setLatAndLong={setLatAndLong} />
+      </chakra.div>
     </Box>
   );
 };

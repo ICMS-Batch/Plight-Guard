@@ -1,13 +1,18 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.response import Response
 
 from api.response import SuccessResponse , BadRequestResponse
 
 from .serializers import RegisterUserSerializer
-from .models import User
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        "access": str(refresh.access_token),
+    }
+
 
 class LoginView(APIView):
     def post(self , request):
@@ -15,7 +20,8 @@ class LoginView(APIView):
         user = authenticate(username=payload.get("email") , password=payload.get("password"))
 
         if user is not None:
-            return SuccessResponse("Login Successfull")
+            response = get_tokens_for_user(user)
+            return SuccessResponse(response)
         else:
             return BadRequestResponse("Credentials Mismatched")
 
@@ -29,7 +35,9 @@ class RegisterView(APIView):
             serializer = RegisterUserSerializer(data=payload)
             if serializer.is_valid():
                 serializer.save()
-                return SuccessResponse(serializer.data)
+                return SuccessResponse("Registered Successfully")
+            else:
+                return BadRequestResponse(serializer.errors)
 
 
 

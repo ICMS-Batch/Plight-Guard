@@ -1,6 +1,6 @@
-import { Flex, Box, chakra, Link, Image, Text } from "@chakra-ui/react";
+import { Flex, Image, Text } from "@chakra-ui/react";
 
-const Report = () => {
+const Report = (props) => {
   return (
     <Flex
       justifyContent="space-between"
@@ -8,28 +8,23 @@ const Report = () => {
       height="auto"
       width="full"
       borderRadius="md"
-      backgroundColor="gray.200"
+      backgroundColor="gray.100"
+      alignItems="center"
+      _hover={{
+        bgColor: "blue.400",
+        color: "white",
+      }}
+      cursor="pointer"
     >
-      <Flex w="40%">
+      <Flex flexDirection="column" w="full" px={3}>
+        <Text>{props.title} </Text>
+      </Flex>
+      <Flex w="auto" maxHeight="full" justifyContent="flex-end">
         <Image
           src="https://images.unsplash.com/photo-1593642532400-2682810df593?ixlib=rb-1.2.1&ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=750&q=80"
-          h="full"
-          w="250px"
+          w="80px"
+          height="auto"
         />
-      </Flex>
-      <Flex flexDirection="column" w="60%">
-        <Text fontSize="2xl">
-          Hello there is a problem with road here, and we have to fix this
-        </Text>
-        <Text>
-          Hello there is a problem with road here, and we have to fix this Hello
-          there is a problem with road here, and we have to fix this Hello there
-          is a problem with road here, and we have to fix this Hello there is a
-          problem with road here, and we have to fix this Hello there is a
-          problem with road here, and we have to fix this Hello there is a
-          problem with road here, and we have to fix this Hello there is a
-          problem with road here, and we have to fix this
-        </Text>
       </Flex>
     </Flex>
   );

@@ -16,13 +16,25 @@ import {
 } from "@chakra-ui/react";
 import { FaLock, FaEnvelope } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
+import UserService from "../services/UserService";
 
 const CFaLock = chakra(FaLock);
 
 const App = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleShowClick = () => setShowPassword(!showPassword);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    UserService.login(credentials).then((response) => {
+      console.log("Login Succcess", response);
+    });
+  };
 
   return (
     <Flex
@@ -42,7 +54,7 @@ const App = () => {
         <Avatar bg="blue.500" />
         <Heading color="blue.400">Login</Heading>
         <Box minW={{ base: "90%", md: "468px" }}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <Stack
               spacing={4}
               p="1rem"
@@ -55,7 +67,16 @@ const App = () => {
                     pointerEvents="none"
                     children={<FaEnvelope color="gray.300" />}
                   />
-                  <Input type="email" placeholder="email address" />
+                  <Input
+                    type="email"
+                    placeholder="email address"
+                    onChange={(e) => {
+                      setCredentials({
+                        ...credentials,
+                        email: e.target.value,
+                      });
+                    }}
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
@@ -68,6 +89,12 @@ const App = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
+                    onChange={(e) => {
+                      setCredentials({
+                        ...credentials,
+                        password: e.target.value,
+                      });
+                    }}
                   />
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleShowClick}>

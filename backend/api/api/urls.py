@@ -67,5 +67,6 @@ def api_exception_handler(exc: Exception, context: dict[str, Any]) -> Response:
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("users/",  include("users.urls"))
+    path("users/",  include("users.urls")), 
+    path("reports/",  include("reports.urls"))
 ]
