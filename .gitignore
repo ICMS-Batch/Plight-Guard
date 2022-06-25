@@ -31,4 +31,5 @@ __pycache__
 logs
 migrations 
 venv
+media/*
 *.db
