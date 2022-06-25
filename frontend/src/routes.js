@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import CreateReport from "./pages/CreateReport";
 import Home from "./pages/Home";
+import ReportView from "./pages/ReportView";
 
 const Routes = () => {
   return (
@@ -14,6 +15,7 @@ const Routes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/post-report" element={<CreateReport />} />
+        <Route path="/preview" element={<ReportView />} />
       </ReactRoutes>
     </BrowserRouter>
   );

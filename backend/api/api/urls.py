@@ -22,6 +22,8 @@ from rest_framework.response import Response
 
 from rest_framework.views import Response
 
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 def api_exception_handler(exc: Exception, context: dict[str, Any]) -> Response:
@@ -69,4 +71,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("users/",  include("users.urls")), 
     path("reports/",  include("reports.urls"))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

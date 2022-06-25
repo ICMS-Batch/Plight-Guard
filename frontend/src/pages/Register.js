@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Flex,
   Heading,
@@ -8,6 +8,7 @@ import {
   Stack,
   InputLeftElement,
   chakra,
+  Select,
   Box,
   Link,
   Avatar,
@@ -17,6 +18,8 @@ import {
 import { FaUserAlt, FaLock, FaEnvelope } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
 import UserService from "../services/UserService";
+import ReportService from "../services/ReportService";
+import { useAuth } from "../auth/authProvider";
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
@@ -29,7 +32,9 @@ const App = () => {
     email: "",
     password: "",
     full_name: "",
+    municipality: 0,
   });
+  const [municipalities, setMunicipalities] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,6 +49,11 @@ const App = () => {
     });
   };
 
+  useEffect(() => {
+    ReportService.getMunicipalities().then((response) => {
+      setMunicipalities(response.results);
+    });
+  }, []);
   return (
     <Flex
       flexDirection="column"
@@ -129,6 +139,26 @@ const App = () => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+              </FormControl>
+              <FormControl id="email" mt={1}>
+                <Select
+                  placeholder="Select Municipality"
+                  onChange={(e) => {
+                    setCredentials({
+                      ...credentials,
+                      municipality: e.target.value,
+                    });
+                  }}
+                  value={credentials.municipality}
+                >
+                  {municipalities.map((municipality, index) => {
+                    return (
+                      <option key={index} value={municipality.id}>
+                        {municipality.name}
+                      </option>
+                    );
+                  })}
+                </Select>
               </FormControl>
               <Button
                 borderRadius={0}

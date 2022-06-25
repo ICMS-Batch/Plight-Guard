@@ -1,11 +1,13 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 
 from api.response import SuccessResponse , BadRequestResponse
 
-from .serializers import RegisterUserSerializer
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from .serializers import LoginUserSerizer, RegisterUserSerializer
+from .models import User
+from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # Create your views here.
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -13,14 +15,28 @@ def get_tokens_for_user(user):
         "access": str(refresh.access_token),
     }
 
+class ProfileView(APIView):
+    authentication_classes = [JWTAuthentication]
 
+    def get_serializer_context(self):
+        context = super(ProfileView, self).get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
+    def get(self, request, *args, **kwargs):
+        print("user" , request.user)
+        serializer = LoginUserSerizer(request.user)
+        return SuccessResponse( serializer.data)
 class LoginView(APIView):
     def post(self , request):
         payload = request.data
-        user = authenticate(username=payload.get("email") , password=payload.get("password"))
+        user = authenticate(request ,**payload)
+        print("user" , user)
 
         if user is not None:
+            print("user" , user)
             response = get_tokens_for_user(user)
+            login(request , user)
             return SuccessResponse(response)
         else:
             return BadRequestResponse("Credentials Mismatched")
@@ -29,7 +45,7 @@ class RegisterView(APIView):
     def post(self , request):
         payload = request.data
         try:
-            User.objects.get(username=payload.get("email"))
+            User.objects.get(email=payload.get("email"))
             return BadRequestResponse("User already exists")
         except User.DoesNotExist:
             serializer = RegisterUserSerializer(data=payload)

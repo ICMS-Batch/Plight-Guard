@@ -16,6 +16,16 @@ const ReportService = {
     const apiResponse = await api.get("reports/categories");
     return apiResponse;
   },
+  getMunicipalities: async () => {
+    const api = new Api();
+    const apiResponse = await api.get("reports/municipalities");
+    return apiResponse;
+  },
+  getSingle: async (id) => {
+    const api = new Api();
+    const apiResponse = await api.get("/reports/" + id);
+    return apiResponse;
+  },
 };
 
 export default ReportService;

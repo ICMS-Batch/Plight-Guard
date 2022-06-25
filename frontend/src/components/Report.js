@@ -1,4 +1,5 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const Report = (props) => {
   return (
@@ -15,16 +16,15 @@ const Report = (props) => {
         color: "white",
       }}
       cursor="pointer"
+      as={Link}
+      to="/preview"
     >
-      <Flex flexDirection="column" w="full" px={3}>
+      <Flex flexDirection="column" w="full" px={3} gap="5px">
         <Text>{props.title} </Text>
+        <Text>Published at {props.createdAt} </Text>
       </Flex>
       <Flex w="auto" maxHeight="full" justifyContent="flex-end">
-        <Image
-          src="https://images.unsplash.com/photo-1593642532400-2682810df593?ixlib=rb-1.2.1&ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=750&q=80"
-          w="80px"
-          height="auto"
-        />
+        <Image src={props.image} w="80px" height="auto" />
       </Flex>
     </Flex>
   );

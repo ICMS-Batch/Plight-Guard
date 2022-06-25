@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Map from "../components/Map";
+import { useNavigate } from "react-router-dom";
 import ReportService from "../services/ReportService";
 
 const CreateReport = () => {
@@ -23,6 +24,7 @@ const CreateReport = () => {
     long: "",
     full_location: "",
     description: "",
+    municipality: "",
     title: "",
     nature_of_incident: "",
     category: "",
@@ -30,7 +32,9 @@ const CreateReport = () => {
 
   const [categories, setCategories] = useState([]);
 
+  const [municipalities, setMunicipalities] = useState([]);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const navigate = useNavigate();
 
   const setLatAndLong = (lat, lng) => {
     setReport({ ...report, lat: lat, long: lng });
@@ -40,23 +44,38 @@ const CreateReport = () => {
     ReportService.getCategories().then((response) => {
       setCategories(response.results);
     });
+
+    ReportService.getMunicipalities().then((response) => {
+      setMunicipalities(response.results);
+    });
   }, []);
 
   console.log("categories", categories);
 
   const submitReport = (e) => {
+    e.preventDefault();
     const formData = new FormData();
-    for (const key in report) {
-      formData.append(key, report[key]);
+    for (let key in report) {
+      if (key === "images") {
+        for (let image of report["images"]) {
+          formData.append(key, image);
+        }
+      } else if (key === "attachments") {
+        for (let image of report["attachments"]) {
+          formData.append(key, image);
+        }
+      } else {
+        formData.append(key, report[key]);
+      }
     }
+
     ReportService.create(formData)
       .then((response) => {
-        setCategories(response.results);
+        navigate("/");
       })
       .catch((err) => {
         console.log("Error creating report", err);
       });
-    e.preventDefault();
   };
 
   return (
@@ -103,9 +122,10 @@ const CreateReport = () => {
               onChange={(e) => {
                 setReport({
                   ...report,
-                  images: [...report.images, e.target.files],
+                  images: e.target.files,
                 });
               }}
+              multiple={true}
             />
           </FormControl>
           <FormControl justifyContent="center">
@@ -127,6 +147,7 @@ const CreateReport = () => {
                   attachments: [...report.attachments, e.target.files],
                 });
               }}
+              multiple={true}
             />
           </FormControl>
           <FormControl as={GridItem} colSpan={[3, 2]}>
@@ -206,6 +227,27 @@ const CreateReport = () => {
           </FormControl>
           <FormControl id="email" mt={1}>
             <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
+              Municipality
+            </FormLabel>
+
+            <Select
+              placeholder="Select Municipality"
+              onChange={(e) => {
+                setReport({ ...report, municipality: e.target.value });
+              }}
+              value={report.municipality}
+            >
+              {municipalities.map((municipality, index) => {
+                return (
+                  <option key={index} value={municipality.id}>
+                    {municipality.name}
+                  </option>
+                );
+              })}
+            </Select>
+          </FormControl>
+          <FormControl id="email" mt={1}>
+            <FormLabel fontSize="sm" fontWeight="md" color="blue.700">
               Marker Location
             </FormLabel>
             <Input
@@ -215,9 +257,9 @@ const CreateReport = () => {
               fontSize={{
                 sm: "sm",
               }}
-              value={`${report.lat} ${report.long}`}
               type="text"
-              disabled
+              value={`${report.lat} ${report.long}`}
+              disabled={true}
             />
           </FormControl>
           <FormControl id="email" mt={1}>

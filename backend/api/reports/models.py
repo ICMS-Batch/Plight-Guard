@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from users.models import Municipality , User
 
 # Create your models here.
 class Report(models.Model): 
@@ -12,10 +12,11 @@ class Report(models.Model):
     full_location = models.CharField(max_length=300)
     description = models.TextField()
     title = models.CharField(max_length=200)
-    created_by = models.ForeignKey(User , on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     nature_of_incident = models.CharField(choices=nature_of_complaint, max_length=40)
     title = models.CharField(max_length=200)
     category = models.ForeignKey("Category" , on_delete=models.CASCADE)
+    municipality = models.ForeignKey(Municipality , on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -39,3 +40,4 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
