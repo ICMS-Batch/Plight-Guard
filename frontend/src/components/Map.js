@@ -2,12 +2,11 @@ import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet/dist/leaflet.css";
 import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { chakra } from "@chakra-ui/react";
-import Search from "./Search";
+import { MapContainer, TileLayer,  GeoJSON } from "react-leaflet";
 import "leaflet-boundary-canvas";
+import data from "../data.json"
 const Map = (props) => {
-  const [position, setPosition] = useState(
+  const [position,setPosition] = useState(
     JSON.stringify([27.7475809, 85.3052357])
   );
 
@@ -16,21 +15,29 @@ const Map = (props) => {
     [30.446945, 88.2015257],
   ];
 
-  const setPositionInMap = (latLong) => {
-    setPosition(latLong);
-    const parsedLocation = JSON.parse(latLong);
-    console.log("parsed location", parsedLocation);
-    props.setLatAndLong(parsedLocation[0], parsedLocation[1]);
-  };
+  // const setPositionInMap = (latLong) => {
+  //   setPosition(latLong);
+  //   const parsedLocation = JSON.parse(latLong);
+  //   console.log("parsed location", parsedLocation);
+  //   props.setLatAndLong(parsedLocation[0], parsedLocation[1]);
+  // };
 
-  const onDragEnd = (event) => {
-    console.log("event", event);
-    const marker = event.target;
-    const latLong = marker.getLatLng();
-    setPosition(JSON.stringify([latLong.lat, latLong.lng]));
-    props.setLatAndLong(latLong.lat, latLong.lng);
-  };
+  // const onDragEnd = (event) => {
+  //   console.log("event", event);
+  //   const marker = event.target;
+  //   const latLong = marker.getLatLng();
+  //   setPosition(JSON.stringify([latLong.lat, latLong.lng]));
+  //   props.setLatAndLong(latLong.lat, latLong.lng);
+  // };
 
+  const style = () => {
+    return  {
+      fillColor: "#E3E3E3",
+      weight: 1,
+      opacity: 0.4,
+      color: 'red',
+      fillOpacity: 0.3
+  }}
   return (
     <>
       <MapContainer
@@ -38,14 +45,15 @@ const Map = (props) => {
         zoom={13}
         scrollWheelZoom={true}
         maxBounds={maxBounds}
+        maxZoom={6}
         style={{ height: "calc(100vh - 60px)", width: "100%" }}
       >
         <TileLayer
           attribution=' &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="https://www.mapbox.com/">Mapbox</a>'
           url="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmV1c2x5IiwiYSI6ImNrcjducHI3YTNueWwydXFodWV6OXZlY3oifQ.tvR8zkkC6ClxjdWfyH4TRQ"
-          maxZoom={20}
         />
-        {props.isDraggable ? (
+        <GeoJSON data={data} style={style}/>
+        {/* {props.isDraggable ? (
           <>
             <Marker
               position={JSON.parse(position)}
@@ -71,7 +79,7 @@ const Map = (props) => {
           </>
         ) : (
           props.children
-        )}
+        )} */}
       </MapContainer>
     </>
   );
