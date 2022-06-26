@@ -1,0 +1,77 @@
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "postgres"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Municipality {
+  id     Int    @id @default(autoincrement())
+  name   String
+  city   City   @relation(fields: [cityId], references: [id])
+  cityId Int
+  User   User[]
+}
+
+model City {
+  id           Int            @id @default(autoincrement())
+  name         String
+  Municipality Municipality[]
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  municipality   Municipality @relation(fields: [municipalityId], references: [id])
+  municipalityId Int
+  full_name      String
+  createdAt      DateTime     @default(now())
+  email          String       @unique
+  password       String
+  reports        Report[]
+}
+
+model Category {
+  id     Int      @id @default(autoincrement())
+  name   String
+  Report Report[]
+}
+
+model NatureOfIncident {
+  id     Int      @id @default(autoincrement())
+  name   String
+  Report Report[]
+}
+
+model Report {
+  id                 Int              @id @default(autoincrement())
+  images             Image[]
+  lat                Float
+  long               Float
+  title              String
+  createdAt          DateTime         @default(now())
+  description        String
+  categoryId         Int
+  category           Category         @relation(fields: [categoryId], references: [id])
+  address            String
+  nature_of_incident NatureOfIncident @relation(fields: [incidentId], references: [id])
+  incidentId         Int
+  User               User             @relation(fields: [userId], references: [id])
+  userId             Int
+  Attachment         Attachment[]
+}
+
+model Attachment {
+  id       Int    @id @default(autoincrement())
+  src      String
+  reportId Int
+  report   Report @relation(fields: [reportId], references: [id])
+}
+
+model Image {
+  id       Int    @id @default(autoincrement())
+  src      String
+  reportId Int
+  report   Report @relation(fields: [reportId], references: [id])
+}
